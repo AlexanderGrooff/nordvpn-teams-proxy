@@ -7,6 +7,10 @@ NORD_SERVER_CMD="/usr/sbin/nordvpnteamsd"
 NORD_SOCKET="/run/nordvpnteams/nordvpnteams.sock"
 NORD_SOCKET_DIR=$(dirname $NORD_SOCKET)
 
+[[ -z ${USER} ]] && echo "USER variable not set. Exiting.." && exit 2
+[[ -z ${PASS} ]] && echo "PASS variable not set. Exiting.." && exit 2
+[[ -z ${ORGANIZATION} ]] && echo "ORGANIZATION variable not set. Exiting.." && exit 2
+
 iptables -P OUTPUT DROP
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
@@ -162,17 +166,18 @@ restart_daemon
 
 [[ -z "${PASS}" ]] && [[ -f "${PASSFILE}" ]] && PASS="$(head -n 1 "${PASSFILE}")"
 
-echo "[$(date -Iseconds)] Logging out"
-#$NORD_CMD logout > /dev/null
 echo "[$(date -Iseconds)] Logging in"
-
 # Pick option 1: email + pass combination
 echo "1" | $NORD_CMD login --organization "${ORGANIZATION}" --email "${USER}" --password "${PASS}" || {
   echo "[$(date -Iseconds)] Invalid Username or password."
   exit 1
 }
 
-echo "[$(date -Iseconds)] Setting up $($NORD_CMD -version)"
+# Dump all connection info and parse out the countrycodes
+AVAILABLE_GATEWAYS=$($NORD_CMD gateways --format '{{ . }}' | egrep -o ' ([a-z]{2}) \[' | awk '{print$1}' | xargs echo)
+[[ -z ${CONNECT} ]] && echo "No country specified, pick one of the following: $AVAILABLE_GATEWAYS" && exit 2
+
+echo "[$(date -Iseconds)] Setting up $($NORD_CMD version)"
 [[ -n ${CYBER_SEC} ]] && $NORD_CMD settings set cybersec ${CYBER_SEC}
 [[ -n ${DNS} ]] && $NORD_CMD settings set dns ${DNS//[;,]/ }
 [[ -n ${FIREWALL} ]] && $NORD_CMD settings set firewall ${FIREWALL}
@@ -214,7 +219,7 @@ connect
 cleanup() {
   $NORD_CMD status
   $NORD_CMD disconnect
-#  service $NORD_CMD stop
+  pkill $NORD_SERVER_CMD
   trap - SIGTERM SIGINT EXIT # https://bash.cyberciti.biz/guide/How_to_clear_trap
   exit 0
 }
