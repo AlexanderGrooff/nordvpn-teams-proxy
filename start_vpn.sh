@@ -199,7 +199,7 @@ trap cleanup SIGTERM SIGINT EXIT # https://www.ctl.io/developers/blog/post/grace
 
 while true; do
   sleep "${RECONNECT:-300}"
-  if [ "$(curl -m 30 -s https://api.nordvpn.com/v1/helpers/ips/insights | jq -r '.["protected"]')" != "true" ]; then
+  if [ "$(nordvpnteams status | grep VPN | grep -q -v Connected)" ]; then
     echo "[$(date -Iseconds)] Unstable connection detected!"
     $NORD_CMD status
     restart_daemon
