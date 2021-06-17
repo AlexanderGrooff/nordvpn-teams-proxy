@@ -3,11 +3,13 @@ FROM ubuntu:18.04
 LABEL maintainer="Alexander Grooff"
 ARG NORDVPN_VERSION=1.2.1
 
+ENV DEBIAN_FRONTEND=NONINTERACTIVE
+
 HEALTHCHECK --start-period=1m --interval=10m \
 	CMD if test "$( curl -m 25 -s https://api.nordvpn.com/v1/helpers/ips/insights | jq -r '.["protected"]' )" != "true" ; then exit 1; fi
 
 RUN apt-get update -y
-RUN apt-get install -y curl jq iputils-ping tzdata iptables iproute2
+RUN apt-get install -y curl jq iputils-ping tzdata iptables iproute2 privoxy
 RUN curl https://downloads.nordteams.com/linux/latest/nordvpnteams-latest_1.0.0_all.deb --output /tmp/nordrepo.deb
 RUN apt-get install -y /tmp/nordrepo.deb
 RUN apt-get update -y
@@ -41,5 +43,8 @@ RUN chmod +x /usr/bin/countries
 RUN chmod +x /usr/bin/cities
 RUN chmod +x /usr/bin/n_groups
 
-CMD /usr/bin/start_vpn.sh
-COPY start_vpn.sh /usr/bin
+RUN mkdir project
+COPY start_vpn.sh /project
+COPY start_proxy.sh /project
+COPY privoxy_config /project
+CMD /project/start_vpn.sh

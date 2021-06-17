@@ -5,16 +5,10 @@ services:
     restart: always
     ports:
       - 8118:8118
-    sysctls:
-       - net.ipv4.conf.all.rp_filter=2
     cap_add:
        - NET_ADMIN
-       - SYS_MODULE
     env_file:
       - vpn_secrets.env  # Place USERNAME and PASSWORD in this file
     dns:
       - 1.1.1.1  # TODO: Not sure why the VPN can't just do DNS itself
-    environment:
-      - TECHNOLOGY=NordLynx
-      - KILLSWITCH=1
     network_mode: bridge  # https://github.com/bubuntux/nordvpn/issues/78#issuecomment-647849787

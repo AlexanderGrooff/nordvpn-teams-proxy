@@ -216,6 +216,8 @@ connect() {
 connect
 [[ -n ${DEBUG} ]] && tail -n 1 -f /var/log/nordvpn/daemon.log &
 
+/project/start_proxy.sh
+
 cleanup() {
   $NORD_CMD status
   $NORD_CMD disconnect
