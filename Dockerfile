@@ -5,8 +5,8 @@ ARG NORDVPN_VERSION=1.2.1
 
 ENV DEBIAN_FRONTEND=NONINTERACTIVE
 
-HEALTHCHECK --start-period=1m --interval=10m \
-	CMD if test "$( curl -m 25 -s https://api.nordvpn.com/v1/helpers/ips/insights | jq -r '.["protected"]' )" != "true" ; then exit 1; fi
+HEALTHCHECK --start-period=20s --interval=5m \
+	CMD if [[ $( nordvpnteams status | grep VPN | grep Connected ]]; then exit 1; fi
 
 RUN apt-get update -y
 RUN apt-get install -y curl jq iputils-ping tzdata iptables iproute2 privoxy
