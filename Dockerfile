@@ -5,8 +5,8 @@ ARG NORDVPN_VERSION=1.2.1
 
 ENV DEBIAN_FRONTEND=NONINTERACTIVE
 
-HEALTHCHECK --start-period=20s --interval=5m \
-	CMD if [[ $( nordvpnteams status | grep VPN | grep -v Connected ]]; then exit 1; fi
+HEALTHCHECK --start-period=30s --interval=1m \
+	CMD nordvpnteams status | grep VPN | grep -q Connected
 
 RUN apt-get update -y
 RUN apt-get install -y curl jq iputils-ping tzdata iptables iproute2 privoxy
