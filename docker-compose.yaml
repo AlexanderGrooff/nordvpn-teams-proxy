@@ -8,7 +8,7 @@ services:
     cap_add:
        - NET_ADMIN
     env_file:
-      - vpn_secrets.env  # Place USERNAME and PASSWORD in this file
+      - vpn_secrets.env  # Place USER, PASS, ORGANIZATION and CONNECT in this file
     dns:
       - 1.1.1.1  # TODO: Not sure why the VPN can't just do DNS itself
     network_mode: bridge  # https://github.com/bubuntux/nordvpn/issues/78#issuecomment-647849787
