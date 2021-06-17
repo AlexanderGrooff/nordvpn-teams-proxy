@@ -168,26 +168,6 @@ AVAILABLE_GATEWAYS=$($NORD_CMD gateways --format '{{ . }}' | egrep -o ' ([a-z]{2
 [[ -z ${CONNECT} ]] && echo "No country specified, pick one of the following: $AVAILABLE_GATEWAYS" && exit 2
 
 echo "[$(date -Iseconds)] Setting up $($NORD_CMD version)"
-[[ -n ${CYBER_SEC} ]] && $NORD_CMD settings set cybersec ${CYBER_SEC}
-[[ -n ${DNS} ]] && $NORD_CMD settings set dns ${DNS//[;,]/ }
-[[ -n ${FIREWALL} ]] && $NORD_CMD settings set firewall ${FIREWALL}
-[[ -n ${KILLSWITCH} ]] && $NORD_CMD settings set killswitch ${KILLSWITCH}
-[[ -n ${OBFUSCATE} ]] && $NORD_CMD settings set obfuscate ${OBFUSCATE}
-[[ -n ${PROTOCOL} ]] && $NORD_CMD settings set protocol ${PROTOCOL}
-[[ -n ${TECHNOLOGY} ]] && $NORD_CMD settings set technology ${TECHNOLOGY}
-
-if [[ -n ${docker_network} ]];then
-  $NORD_CMD whitelist add subnet ${docker_network}
-  [[ -n ${NETWORK} ]] && for net in ${NETWORK//[;,]/ }; do $NORD_CMD whitelist add subnet "${net}"; done
-fi
-if [[ -n ${docker6_network} ]];then
-  $NORD_CMD settings set ipv6 on
-  $NORD_CMD whitelist add subnet ${docker6_network}
-  [[ -n ${NETWORK6} ]] && for net in ${NETWORK6//[;,]/ }; do $NORD_CMD whitelist add subnet "${net}"; done
-fi
-[[ -n ${PORTS} ]] && for port in ${PORTS//[;,]/ }; do $NORD_CMD whitelist add port "${port}"; done
-[[ -n ${PORT_RANGE} ]] && $NORD_CMD whitelist add ports ${PORT_RANGE}
-[[ -n ${DEBUG} ]] && $NORD_CMD settings settings
 
 connect() {
   echo "[$(date -Iseconds)] Connecting..."
