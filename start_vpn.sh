@@ -11,17 +11,6 @@ NORD_SOCKET_DIR=$(dirname $NORD_SOCKET)
 [[ -z ${PASS} ]] && echo "PASS variable not set. Exiting.." && exit 2
 [[ -z ${ORGANIZATION} ]] && echo "ORGANIZATION variable not set. Exiting.." && exit 2
 
-iptables -P OUTPUT DROP
-iptables -P INPUT DROP
-iptables -P FORWARD DROP
-ip6tables -P OUTPUT DROP 2>/dev/null
-ip6tables -P INPUT DROP 2>/dev/null
-ip6tables -P FORWARD DROP 2>/dev/null
-iptables -F
-iptables -X
-ip6tables -F 2>/dev/null
-ip6tables -X 2>/dev/null
-
 [[ "${DEBUG,,}" = "trace"  ]] && set -x
 
 if [ "$(cat /etc/timezone)" != "${TZ}" ]; then
@@ -36,8 +25,8 @@ echo "[$(date -Iseconds)] Firewall is up, everything has to go through the vpn"
 docker_network="$(ip -o addr show dev eth0 | awk '$3 == "inet" {print $4}')"
 docker6_network="$(ip -o addr show dev eth0 | awk '$3 == "inet6" {print $4; exit}')"
 
-echo "[$(date -Iseconds)] Enabling connection to secure interfaces"
 if [[ -n ${docker_network} ]]; then
+  echo "[$(date -Iseconds)] Enabling connection to secure interfaces"
   iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
   iptables -A INPUT -i lo -j ACCEPT
   iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
@@ -52,6 +41,7 @@ if [[ -n ${docker_network} ]]; then
   iptables -t nat -A POSTROUTING -o nordlynx+ -j MASQUERADE
 fi
 if [[ -n ${docker6_network} ]]; then
+  echo "[$(date -Iseconds)] Enabling connection to secure interfaces"
   ip6tables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
   ip6tables -A INPUT -p icmp -j ACCEPT
   ip6tables -A INPUT -i lo -j ACCEPT
