@@ -13,3 +13,10 @@ PASS=mypass
 ORGANIZATION=myorg
 CONNECT=nl  # Mandatory, no autoconnect feature yet
 ```
+
+## Credits
+
+This project is largely based on these two projects:
+
+- https://github.com/bubuntux/nordvpn
+- https://github.com/Joentje/nordvpn-proxy
