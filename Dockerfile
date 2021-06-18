@@ -38,4 +38,5 @@ RUN mkdir project
 COPY start_vpn.sh /project
 COPY start_proxy.sh /project
 COPY privoxy_config /project
+RUN chmod +x /project/*.sh
 CMD /project/start_vpn.sh
