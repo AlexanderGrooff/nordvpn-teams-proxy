@@ -1,8 +1,6 @@
 name: Build and deploy Docker image
 
 on:
-  schedule:
-    - cron: $cron-daily
   push:
     branches: [ $default-branch ]
     # Publish semver tags as releases.
