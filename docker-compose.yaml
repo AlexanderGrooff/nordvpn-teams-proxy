@@ -1,7 +1,7 @@
 version: "3"
 services:
   vpn:
-    build: .
+    image: ghcr.io/alexandergrooff/nordvpn-teams-proxy:latest
     restart: always
     ports:
       - 8118:8118
