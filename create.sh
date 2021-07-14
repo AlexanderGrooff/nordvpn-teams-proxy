@@ -2,8 +2,8 @@
 # Usage:
 # ./create 8888 7dfeaac661e4
 
-PORT=$1
-IMAGE=$2
+PORT=${1:-8118}
+IMAGE=${2:-ghcr.io/alexandergrooff/nordvpn-teams-proxy}
 
 docker run \
 --env-file vpn_secrets.env \
