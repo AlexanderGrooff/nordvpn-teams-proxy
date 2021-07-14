@@ -186,6 +186,7 @@ connect() {
 connect
 [[ -n ${DEBUG} ]] && tail -n 1 -f /var/log/nordvpn/daemon.log &
 
+[[ -n ${PORT} ]] && sed -i "s/8118/${PORT}/" /project/privoxy_config
 /project/start_proxy.sh
 
 cleanup() {
